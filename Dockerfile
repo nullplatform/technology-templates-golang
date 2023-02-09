@@ -1,11 +1,27 @@
-FROM node:lts-alpine
+## Build
+FROM golang:1.17-buster AS build
 
-WORKDIR /usr/src/app
+WORKDIR /app
 
-COPY package*.json ./
+ENV GOPRIVATE=github.com/*/*
+ARG GITHUB_TOKEN
+RUN git config --global url.https://$GITHUB_TOKEN@github.com/.insteadOf https://github.com/ 
 
-RUN npm ci --only=production
+COPY go.mod ./
+COPY go.sum ./
+RUN go mod download
 
-COPY . .
+COPY * ./
 
-CMD [ "node", "index.js" ]
+RUN go build -o /application
+
+## Deploy
+FROM gcr.io/distroless/base-debian10
+
+WORKDIR /app
+
+COPY --from=build /application ./application
+
+EXPOSE 8080
+
+ENTRYPOINT ["/app/application"]
