@@ -2,10 +2,7 @@ module nullplatform.io/m/v2
 
 go 1.17
 
-require (
-	github.com/labstack/echo/v4 v4.10.0
-	github.com/nullplatform/golang-module-test v0.0.0-20230209212208-969419db53b0
-)
+require github.com/labstack/echo/v4 v4.10.0
 
 require (
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
